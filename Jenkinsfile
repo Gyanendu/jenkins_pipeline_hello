@@ -1,26 +1,17 @@
 node {
-    stage('build'){
-        echo "building"
-    }
-}
-node {
-    stage('test'){
-        echo "testing"
-    }
-}
-stage('Get approval'){
-    input "Deploy to qa?"
-}
-node {
-    stage('deploy to qa'){
-        echo "deploying"
-    }
-node {
-    stage('Get approval'){
-    input "Deploy to prod?"
-    }
-    stage('deploy to prod'){
-        echo "deploying to prod"
-    }   
- }
+    stage "Create build output"
+    
+    // Make the output directory.
+    sh "mkdir -p output"
+
+    // Write an useful file, which is needed to be archived.
+    writeFile file: "output/usefulfile.txt", text: "This file is useful, need to archive it."
+
+    // Write an useless file, which is not needed to be archived.
+    writeFile file: "output/uselessfile.md", text: "This file is useless, no need to archive it."
+
+    stage "Archive build output"
+    
+    // Archive the build output artifacts.
+    archiveArtifacts artifacts: 'output/*.txt', excludes: 'output/*.md'
 }
